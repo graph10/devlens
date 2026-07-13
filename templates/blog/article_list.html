@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-foreground">
+                {% if current_category %}{{ current_category.name }}{% else %}{% translate "Blog" %}{% endif %}
+            </h1>
+            <p class="text-sm text-foreground-muted mt-1">
+                {% translate "Technical articles and insights." %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="flex flex-wrap gap-2 mb-10">
+        <a href="{% url 'blog-list' %}"
+           class="px-3 py-1.5 text-xs font-medium rounded-lg border transition-all
+                  {% if not current_category %}bg-accent text-white border-accent{% else %}bg-background-elevated border-border text-foreground-muted hover:text-foreground hover:border-border-hover{% endif %}">
+            {% translate "All" %}
+        </a>
+        {% for cat in categories %}
+        <a href="{% url 'blog-category' cat.slug %}"
+           class="px-3 py-1.5 text-xs font-medium rounded-lg border transition-all
+                  {% if current_category == cat %}bg-accent text-white border-accent{% else %}bg-background-elevated border-border text-foreground-muted hover:text-foreground hover:border-border-hover{% endif %}">
+            {{ cat.translated_name }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Articles -->
+    {% if page_obj %}
+    <div class="space-y-6">
+        {% for article in page_obj %}
+        <article class="bg-background-card border border-border rounded-2xl p-6 hover:border-border-hover transition-all group">
+            <div class="flex items-center gap-3 mb-3">
+                {% if article.category %}
+                <a href="{% url 'blog-category' article.category.slug %}" class="text-2xs font-medium px-2.5 py-1 rounded-md bg-accent-muted text-accent uppercase tracking-wide hover:bg-accent/20 transition-colors">
+                    {{ article.category.translated_name }}
+                </a>
+                {% endif %}
+                <span class="text-2xs text-foreground-subtle">{{ article.published_at|date:"M j, Y" }}</span>
+            </div>
+            <h2 class="text-lg font-semibold text-foreground mb-2 group-hover:text-accent transition-colors">
+                <a href="{% url 'blog-article' article.slug %}">{{ article.translated_title }}</a>
+            </h2>
+            <p class="text-sm text-foreground-muted leading-relaxed mb-4">{{ article.translated_excerpt }}</p>
+            <a href="{% url 'blog-article' article.slug %}" class="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-accent-hover transition-colors">
+                {% translate "Read more" %}
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+        </article>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="flex items-center justify-center gap-2 mt-10">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1.5 text-sm rounded-lg bg-background-elevated border border-border text-foreground-muted hover:text-foreground hover:border-border-hover transition-all">
+            {% translate "Previous" %}
+        </a>
+        {% endif %}
+        <span class="text-sm text-foreground-muted px-3">
+            {% translate "Page" %} {{ page_obj.number }} {% translate "of" %} {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1.5 text-sm rounded-lg bg-background-elevated border border-border text-foreground-muted hover:text-foreground hover:border-border-hover transition-all">
+            {% translate "Next" %}
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="text-center py-16">
+        <p class="text-foreground-muted">{% translate "No articles published yet." %}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

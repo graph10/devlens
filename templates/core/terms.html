@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h1 class="text-3xl font-bold text-foreground mb-8">{% translate "Terms of Service" %}</h1>
+    <div class="prose prose-invert max-w-none">
+        <p class="text-foreground-muted">{% translate "By using DevLens, you agree to these Terms of Service." %}</p>
+        <h2 class="text-xl font-semibold text-foreground mt-8 mb-4">{% translate "Usage" %}</h2>
+        <p class="text-foreground-muted">{% translate "DevLens is provided as-is for developer diagnostic purposes. We make no guarantees about accuracy." %}</p>
+    </div>
+</div>
+{% endblock %}

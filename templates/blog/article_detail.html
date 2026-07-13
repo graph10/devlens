@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm text-foreground-muted mb-8">
+        <a href="{% url 'blog-list' %}" class="hover:text-foreground transition-colors">{% translate "Blog" %}</a>
+        {% if article.category %}
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <a href="{% url 'blog-category' article.category.slug %}" class="hover:text-foreground transition-colors">{{ article.category.translated_name }}</a>
+        {% endif %}
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <span class="text-foreground truncate max-w-[200px]">{{ article.translated_title }}</span>
+    </nav>
+
+    <!-- Article Header -->
+    <header class="mb-10">
+        <div class="flex items-center gap-3 mb-4">
+            {% if article.category %}
+            <span class="text-2xs font-medium px-2.5 py-1 rounded-md bg-accent-muted text-accent uppercase tracking-wide">
+                {{ article.category.translated_name }}
+            </span>
+            {% endif %}
+            <time class="text-2xs text-foreground-subtle" datetime="{{ article.published_at|date:'Y-m-d' }}">
+                {{ article.published_at|date:"F j, Y" }}
+            </time>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-bold text-foreground mb-4 leading-tight">{{ article.translated_title }}</h1>
+        {% if article.excerpt %}
+        <p class="text-lg text-foreground-muted leading-relaxed">{{ article.translated_excerpt }}</p>
+        {% endif %}
+    </header>
+
+    <!-- Table of Contents -->
+    {% with translation=article.get_translation %}
+    {% if translation.toc %}
+    <div class="bg-background-card border border-border rounded-2xl p-6 mb-10">
+        <h2 class="text-sm font-semibold text-foreground mb-4">{% translate "Table of Contents" %}</h2>
+        <nav class="space-y-2">
+            {% for item in translation.toc %}
+            <a href="#{{ item.id }}" class="block text-sm text-foreground-muted hover:text-accent transition-colors
+                {% if item.level == 2 %}pl-4{% elif item.level == 3 %}pl-8{% endif %}">
+                {{ item.name }}
+            </a>
+            {% endfor %}
+        </nav>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Content -->
+    <article class="prose prose-invert prose-lg max-w-none">
+        {{ article.translated_html|safe }}
+    </article>
+
+    <!-- Tags -->
+    {% if article.tags.all %}
+    <div class="flex flex-wrap gap-2 mt-10 pt-8 border-t border-border">
+        {% for tag in article.tags.all %}
+        <span class="px-3 py-1 text-xs font-medium rounded-lg bg-background-elevated border border-border text-foreground-muted">
+            {{ tag.translated_name }}
+        </span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Related Articles -->
+    {% if related_articles %}
+    <div class="mt-16 pt-10 border-t border-border">
+        <h3 class="text-lg font-semibold text-foreground mb-6">{% translate "Related Articles" %}</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {% for ra in related_articles %}
+            <a href="{% url 'blog-article' ra.slug %}" class="bg-background-card border border-border rounded-xl p-4 hover:border-border-hover transition-all group">
+                <p class="text-sm font-medium text-foreground group-hover:text-accent transition-colors mb-1">{{ ra.translated_title }}</p>
+                <p class="text-2xs text-foreground-subtle">{{ ra.published_at|date:"M j, Y" }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

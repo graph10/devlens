@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative pt-16 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <!-- Subtle background glow -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-accent/[0.03] blur-3xl"></div>
+    </div>
+
+    <div class="relative max-w-4xl mx-auto text-center">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-muted border border-accent/20 mb-8">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-pulse-subtle absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+            </span>
+            <span class="text-xs font-medium text-accent">{% translate "Now in Public Beta" %}</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
+            {% translate "Paste anything." %}<br>
+            <span class="text-accent">{% translate "We'll figure it out." %}</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-lg sm:text-xl text-foreground-muted max-w-2xl mx-auto mb-12 leading-relaxed">
+            {% translate "Understand errors, logs, SQL queries, Docker output and more using AI." %}
+        </p>
+
+        <!-- Analysis Form -->
+        <div class="max-w-3xl mx-auto" id="analysis-form-container">
+            <form action="{% url 'analyze' %}" method="post"
+                  class="relative">
+                {% csrf_token %}
+
+                <div class="relative bg-background-card border border-border rounded-2xl p-1 shadow-soft hover:border-border-hover transition-colors focus-within:border-accent/50 focus-within:shadow-glow">
+                    <textarea
+                        name="input"
+                        placeholder="{% translate 'Paste a Python traceback, Docker log, SQL error, REST API response, Git output, or anything else...' %}"
+                        class="w-full bg-transparent text-foreground placeholder-foreground-subtle text-sm leading-relaxed p-5 min-h-[200px] max-h-[500px] resize-y outline-none font-mono"
+                        required
+                    ></textarea>
+
+                    <!-- Bottom bar -->
+                    <div class="flex items-center justify-between px-4 py-3 border-t border-border/50">
+                        <div class="flex items-center gap-2 text-xs text-foreground-subtle">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>{% translate "We auto-detect the input type" %}</span>
+                        </div>
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-6 py-2.5 bg-accent text-white text-sm font-semibold rounded-xl hover:bg-accent-hover shadow-glow transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg id="analyze-spinner" class="htmx-indicator w-4 h-4 animate-spin hidden" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                            <span>{% translate "Analyze" %}</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Example Buttons -->
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
+                <span class="text-xs text-foreground-subtle mr-1">{% translate "Try an example:" %}</span>
+                {% for key, label in examples.items %}
+                <button
+                    hx-get="{% url 'example-text' key %}"
+                    hx-target="textarea[name='input']"
+                    hx-swap="innerHTML"
+                    class="px-3 py-1.5 text-xs font-medium rounded-lg bg-background-elevated border border-border text-foreground-muted hover:text-foreground hover:border-border-hover hover:bg-background-hover transition-all">
+                    {{ label|title|cut:"-"|cut:"_" }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-24 border-t border-border">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-2xl sm:text-3xl font-bold text-foreground mb-4">{% translate "How It Works" %}</h2>
+            <p class="text-foreground-muted max-w-lg mx-auto">{% translate "Get a professional engineering report in seconds." %}</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for feature in features %}
+            <div class="group bg-background-card border border-border rounded-2xl p-6 hover:border-border-hover hover:shadow-soft transition-all">
+                <div class="w-10 h-10 rounded-xl bg-accent-muted flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% if feature.icon == 'file-text' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        {% elif feature.icon == 'search' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        {% elif feature.icon == 'check-circle' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        {% else %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        {% endif %}
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-foreground mb-2">{{ feature.title }}</h3>
+                <p class="text-sm text-foreground-muted leading-relaxed">{{ feature.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Capabilities Section -->
+<section class="py-24 border-t border-border">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-2xl sm:text-3xl font-bold text-foreground mb-4">{% translate "Capabilities" %}</h2>
+            <p class="text-foreground-muted max-w-lg mx-auto">{% translate "One intelligent platform. Expanding capabilities." %}</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for cap in capabilities %}
+            <div class="group relative bg-background-card border border-border rounded-2xl p-6 hover:border-border-hover transition-all
+                        {% if cap.status == 'coming_soon' %}opacity-60{% endif %}">
+                {% if cap.status == 'available' %}
+                <div class="absolute top-4 right-4 flex items-center gap-1.5">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-2xs font-medium text-emerald-400 uppercase tracking-wide">{% translate "Available" %}</span>
+                </div>
+                {% else %}
+                <div class="absolute top-4 right-4">
+                    <span class="text-2xs font-medium text-foreground-subtle uppercase tracking-wide">{% translate "Coming Soon" %}</span>
+                </div>
+                {% endif %}
+
+                <div class="w-10 h-10 rounded-xl bg-accent-muted flex items-center justify-center mb-4">
+                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {% if cap.icon == 'stethoscope' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        {% elif cap.icon == 'container' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        {% elif cap.icon == 'search' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        {% elif cap.icon == 'git-branch' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                        {% elif cap.icon == 'database' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+                        {% elif cap.icon == 'rocket' %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                        {% else %}
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        {% endif %}
+                    </svg>
+                </div>
+                <h3 class="text-base font-semibold text-foreground mb-2">{{ cap.name }}</h3>
+                <p class="text-sm text-foreground-muted leading-relaxed">{{ cap.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-24 border-t border-border">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-2xl sm:text-3xl font-bold text-foreground mb-4">{% translate "Ready to diagnose?" %}</h2>
+        <p class="text-foreground-muted mb-8">{% translate "Paste any error, log, or technical output above. No signup required for basic analysis." %}</p>
+        <a href="#analysis-form-container" class="inline-flex items-center gap-2 px-8 py-3 bg-accent text-white text-base font-semibold rounded-xl hover:bg-accent-hover shadow-glow transition-all">
+            {% translate "Start Analyzing" %}
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+        </a>
+    </div>
+</section>
+{% endblock %}

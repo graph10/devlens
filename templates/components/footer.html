@@ -1,0 +1,58 @@
+{% load i18n %}
+<footer class="border-t border-border bg-background">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Brand -->
+            <div class="md:col-span-1">
+                <a href="{% url 'landing' %}" class="flex items-center gap-2.5 mb-4">
+                    <div class="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
+                        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <span class="text-base font-semibold text-foreground">DevLens</span>
+                </a>
+                <p class="text-sm text-foreground-muted leading-relaxed">
+                    {% translate "Paste anything. We'll figure it out." %}
+                </p>
+            </div>
+
+            <!-- Product -->
+            <div>
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-4">{% translate "Product" %}</h4>
+                <ul class="space-y-2.5">
+                    <li><a href="{% url 'features' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Features" %}</a></li>
+                    <li><a href="{% url 'pricing' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Pricing" %}</a></li>
+                    {% if ENABLE_BLOG %}
+                    <li><a href="{% url 'blog-list' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Blog" %}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Company -->
+            <div>
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-4">{% translate "Company" %}</h4>
+                <ul class="space-y-2.5">
+                    <li><a href="{% url 'privacy' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Privacy" %}</a></li>
+                    <li><a href="{% url 'terms' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Terms" %}</a></li>
+                    <li><a href="{% url 'rss-feed' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "RSS Feed" %}</a></li>
+                </ul>
+            </div>
+
+            <!-- Connect -->
+            <div>
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-4">{% translate "Connect" %}</h4>
+                <ul class="space-y-2.5">
+                    <li><a href="https://github.com" target="_blank" rel="noopener" class="text-sm text-foreground-muted hover:text-foreground transition-colors">GitHub</a></li>
+                    <li><a href="https://twitter.com" target="_blank" rel="noopener" class="text-sm text-foreground-muted hover:text-foreground transition-colors">Twitter</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="text-xs text-foreground-subtle">
+                &copy; {% now "Y" %} DevLens. {% translate "All rights reserved." %}
+            </p>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-16">
+        <h1 class="text-3xl sm:text-4xl font-bold text-foreground mb-4">{% translate "Simple Pricing" %}</h1>
+        <p class="text-lg text-foreground-muted max-w-lg mx-auto">{% translate "Choose the plan that fits your needs." %}</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        {% for plan in plans %}
+        <div class="relative bg-background-card border border-border rounded-2xl p-8
+                    {% if not plan.is_free %}border-accent/30 shadow-glow{% else %}hover:border-border-hover{% endif %}
+                    transition-all">
+            {% if not plan.is_free %}
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span class="px-3 py-1 bg-accent text-white text-2xs font-semibold rounded-full uppercase tracking-wide">
+                    {% translate "Recommended" %}
+                </span>
+            </div>
+            {% endif %}
+
+            <h3 class="text-xl font-bold text-foreground mb-2">{{ plan.get_name }}</h3>
+            <p class="text-sm text-foreground-muted mb-6 min-h-[40px]">
+                {% if LANGUAGE_CODE == 'ru' and plan.description_ru %}{{ plan.description_ru }}{% else %}{{ plan.description_en }}{% endif %}
+            </p>
+
+            <div class="flex items-baseline gap-1 mb-8">
+                {% if plan.price_usd_monthly > 0 %}
+                <span class="text-4xl font-bold text-foreground">${{ plan.price_usd_monthly|floatformat:"0" }}</span>
+                <span class="text-sm text-foreground-muted">/ {% translate "month" %}</span>
+                {% else %}
+                <span class="text-4xl font-bold text-foreground">{% translate "Free" %}</span>
+                {% endif %}
+            </div>
+
+            <ul class="space-y-3 mb-8">
+                <li class="flex items-center gap-3 text-sm">
+                    <svg class="w-4 h-4 {% if plan.daily_analysis_limit == -1 or plan.daily_analysis_limit >= 5 %}text-emerald-400{% else %}text-foreground-subtle{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span class="{% if plan.daily_analysis_limit == -1 or plan.daily_analysis_limit >= 5 %}text-foreground{% else %}text-foreground-muted{% endif %}">
+                        {% if plan.daily_analysis_limit == -1 %}{% translate "Unlimited analyses" %}{% else %}{% blocktranslate with limit=plan.daily_analysis_limit %}{{ limit }} analyses/day{% endblocktranslate %}{% endif %}
+                    </span>
+                </li>
+                <li class="flex items-center gap-3 text-sm">
+                    <svg class="w-4 h-4 {% if plan.has_history %}text-emerald-400{% else %}text-foreground-subtle{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span class="{% if plan.has_history %}text-foreground{% else %}text-foreground-muted{% endif %}">{% translate "Analysis history" %}</span>
+                </li>
+                <li class="flex items-center gap-3 text-sm">
+                    <svg class="w-4 h-4 {% if plan.has_saved_reports %}text-emerald-400{% else %}text-foreground-subtle{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span class="{% if plan.has_saved_reports %}text-foreground{% else %}text-foreground-muted{% endif %}">{% translate "Saved reports" %}</span>
+                </li>
+                <li class="flex items-center gap-3 text-sm">
+                    <svg class="w-4 h-4 {% if plan.has_priority %}text-emerald-400{% else %}text-foreground-subtle{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span class="{% if plan.has_priority %}text-foreground{% else %}text-foreground-muted{% endif %}">{% translate "Priority access" %}</span>
+                </li>
+            </ul>
+
+            {% if user.is_authenticated %}
+                {% if current_subscription and current_subscription.plan == plan and current_subscription.status == 'active' %}
+                <button disabled class="w-full py-2.5 rounded-xl text-sm font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-default">
+                    {% translate "Current Plan" %}
+                </button>
+                {% elif plan.is_free %}
+                <form action="{% url 'subscribe' plan.slug %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full py-2.5 rounded-xl text-sm font-semibold bg-background-elevated border border-border text-foreground hover:border-border-hover transition-all">
+                        {% translate "Get Started" %}
+                    </button>
+                </form>
+                {% else %}
+                <form action="{% url 'subscribe' plan.slug %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full py-2.5 rounded-xl text-sm font-semibold bg-accent text-white hover:bg-accent-hover shadow-glow transition-all">
+                        {% translate "Upgrade" %}
+                    </button>
+                </form>
+                {% endif %}
+            {% else %}
+            <a href="{% url 'register' %}" class="block w-full py-2.5 rounded-xl text-sm font-semibold bg-accent text-white hover:bg-accent-hover shadow-glow transition-all text-center">
+                {% translate "Get Started" %}
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

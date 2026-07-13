@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-lg">
+        <div class="text-center mb-8">
+            <div class="w-12 h-12 rounded-xl bg-accent flex items-center justify-center mx-auto mb-4 shadow-glow">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight text-foreground">{% translate "Create Account" %}</h1>
+            <p class="text-base text-foreground-muted mt-3">{% translate "Start analyzing your code today." %}</p>
+        </div>
+
+        <div class="rounded-2xl overflow-hidden border border-border bg-background-card shadow-soft p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-foreground mb-1.5">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p class="mt-1.5 text-xs text-severity-error">{{ field.errors.0 }}</p>
+                    {% endif %}
+                    {% if field.help_text and field.name != "password1" and field.name != "password2" %}
+                    <div class="mt-2 text-xs text-foreground-muted">
+                        {{ field.help_text|safe }}
+                    </div>
+                    {% endif %}
+                    {% if field.name == "password1" %}
+                    <p class="mt-2 text-xs text-foreground-muted">
+                        {% translate "Password must contain at least 8 characters." %}
+                    </p>
+                    {% endif %}
+
+                    {% if field.name == "password2" %}
+                    <p class="mt-2 text-xs text-foreground-muted">
+                        {% translate "Enter the same password again." %}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                <div class="bg-severity-error/10 border border-severity-error/20 rounded-lg p-3">
+                    <p class="text-xs text-severity-error">{{ form.non_field_errors.0 }}</p>
+                </div>
+                {% endif %}
+
+                <button
+                    type="submit"
+                    class="w-full py-3 rounded-xl bg-accent text-white font-semibold shadow-glow hover:bg-accent-hover hover:scale-[1.01] active:scale-[0.99] transition-all duration-200">
+                    {% translate "Sign Up" %}
+                </button>
+            </form>
+        </div>
+
+        <p class="text-center text-sm text-foreground-muted mt-6">
+            {% translate "Already have an account?" %}
+            <a href="{% url 'login' %}" class="text-accent hover:text-accent-hover font-medium transition-colors">{% translate "Log In" %}</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

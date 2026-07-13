@@ -1,0 +1,66 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ meta_title|default:"DevLens" }}</title>
+
+    {% include "includes/seo_meta.html" %}
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- TailwindCSS -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    <!-- HTMX -->
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+
+    <!-- Alpine.js (minimal usage) -->
+    <script src="{% static 'js/alpine.min.js' %}" defer></script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen bg-background text-foreground font-sans antialiased"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+    <!-- Navigation -->
+    {% include "components/nav.html" %}
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="fixed top-20 right-4 z-50 space-y-2" x-data="{ show: true }" x-show="show" x-transition>
+        {% for message in messages %}
+        <div class="px-4 py-3 rounded-xl shadow-soft border border-border
+                    {% if message.tags == 'success' %}bg-emerald-950/80 border-emerald-800/50 text-emerald-400
+                    {% elif message.tags == 'error' %}bg-red-950/80 border-red-800/50 text-red-400
+                    {% elif message.tags == 'warning' %}bg-amber-950/80 border-amber-800/50 text-amber-400
+                    {% else %}bg-background-elevated border-border text-foreground{% endif %}
+                    flex items-center gap-3 min-w-[300px]"
+             x-init="setTimeout(() => show = false, 5000)">
+            <button @click="show = false" class="ml-auto text-foreground-muted hover:text-foreground transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <span class="text-sm font-medium">{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="min-h-[calc(100vh-64px-200px)]">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include "components/footer.html" %}
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

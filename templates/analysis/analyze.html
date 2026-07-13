@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold text-foreground mb-2">{% translate "Analyze" %}</h1>
+        <p class="text-sm text-foreground-muted">{% translate "Paste any technical output below. We'll detect the type and provide a structured report." %}</p>
+    </div>
+
+    <!-- Analysis Form -->
+    <div id="analysis-form-container">
+        <form action="{% url 'analyze' %}" method="post"
+              class="relative">
+            {% csrf_token %}
+
+            <div class="relative bg-background-card border border-border rounded-2xl p-1 shadow-soft hover:border-border-hover transition-colors focus-within:border-accent/50 focus-within:shadow-glow">
+                <textarea
+                    name="input"
+                    placeholder="{% translate 'Paste a Python traceback, Docker log, SQL error, REST API response, Git output, or anything else...' %}"
+                    class="w-full bg-transparent text-foreground placeholder-foreground-subtle text-sm leading-relaxed p-5 min-h-[300px] max-h-[600px] resize-y outline-none font-mono"
+                    required
+                ></textarea>
+
+                <div class="flex items-center justify-between px-4 py-3 border-t border-border/50">
+                    <div class="flex items-center gap-2 text-xs text-foreground-subtle">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>{% translate "Auto-detection enabled" %}</span>
+                    </div>
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-accent text-white text-sm font-semibold rounded-xl hover:bg-accent-hover shadow-glow transition-all">
+                        <span>{% translate "Analyze" %}</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Examples -->
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
+            <span class="text-xs text-foreground-subtle mr-1">{% translate "Try:" %}</span>
+            {% for key, label in examples.items %}
+            <button
+                hx-get="{% url 'example-text' key %}"
+                hx-target="textarea[name='input']"
+                hx-swap="innerHTML"
+                class="px-3 py-1.5 text-xs font-medium rounded-lg bg-background-elevated border border-border text-foreground-muted hover:text-foreground hover:border-border-hover hover:bg-background-hover transition-all">
+                {{ label }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

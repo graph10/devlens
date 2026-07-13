@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% load i18n humanize %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Diagnostic Card -->
+    <div class="bg-background-card border border-border rounded-2xl p-6 mb-6 shadow-soft">
+        <div class="flex items-start justify-between mb-6">
+            <div>
+                <h1 class="text-xl font-bold text-foreground mb-1">
+                    {% translate "Analysis Report" %}
+                </h1>
+                <p class="text-sm text-foreground-muted">
+                    {{ task.created_at|naturaltime }}
+                    {% if task.processing_time_ms %}
+                    &middot; {{ task.processing_time_ms }}ms
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-2">
+                {% if user.is_authenticated %}
+                <div id="save-button-container">
+                    {% include "analysis/partials/save_button.html" with is_saved=is_saved public_id=task.public_id %}
+                </div>
+                {% endif %}
+                <a href="{% url 'export-markdown' task.public_id %}"
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-background-elevated border border-border text-foreground-muted hover:text-foreground hover:border-border-hover transition-all">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    {% translate "Copy" %}
+                </a>
+                <a href="{% url 'export-markdown' task.public_id %}"
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-background-elevated border border-border text-foreground-muted hover:text-foreground hover:border-border-hover transition-all">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    {% translate "Export MD" %}
+                </a>
+            </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <!-- Detected Input -->
+            <div class="bg-background rounded-xl p-4 border border-border/50">
+                <p class="text-2xs font-medium uppercase tracking-wider text-foreground-subtle mb-1.5">{% translate "Detected Input" %}</p>
+                <p class="text-sm font-semibold text-foreground">{{ task.input_type|default:"Unknown"|title }}</p>
+            </div>
+
+            <!-- Framework -->
+            <div class="bg-background rounded-xl p-4 border border-border/50">
+                <p class="text-2xs font-medium uppercase tracking-wider text-foreground-subtle mb-1.5">{% translate "Framework" %}</p>
+                <p class="text-sm font-semibold text-foreground">{{ task.input_framework|default:"—" }}</p>
+            </div>
+
+            <!-- Severity -->
+            <div class="bg-background rounded-xl p-4 border border-border/50">
+                <p class="text-2xs font-medium uppercase tracking-wider text-foreground-subtle mb-1.5">{% translate "Severity" %}</p>
+                <span class="inline-flex items-center gap-1.5 text-sm font-semibold
+                    {% if report.severity == 'critical' %}text-severity-critical
+                    {% elif report.severity == 'error' %}text-severity-error
+                    {% elif report.severity == 'warning' %}text-severity-warning
+                    {% else %}text-severity-info{% endif %}">
+                    <span class="w-2 h-2 rounded-full
+                        {% if report.severity == 'critical' %}bg-severity-critical
+                        {% elif report.severity == 'error' %}bg-severity-error
+                        {% elif report.severity == 'warning' %}bg-severity-warning
+                        {% else %}bg-severity-info{% endif %}"></span>
+                    {{ report.get_severity_display }}
+                </span>
+            </div>
+
+            <!-- Confidence -->
+            <div class="bg-background rounded-xl p-4 border border-border/50">
+                <p class="text-2xs font-medium uppercase tracking-wider text-foreground-subtle mb-1.5">{% translate "Confidence" %}</p>
+                <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 bg-background-elevated rounded-full overflow-hidden">
+                        <div class="h-full bg-accent rounded-full transition-all" style="width: {{ report.confidence }}%"></div>
+                    </div>
+                    <span class="text-sm font-semibold text-foreground">{{ report.confidence }}%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Status -->
+        <div class="mt-4 flex items-center gap-3 px-4 py-3 rounded-xl
+            {% if report.overall_status == 'critical' %}bg-severity-critical/10 border border-severity-critical/20
+            {% elif report.overall_status == 'needs_attention' %}bg-severity-warning/10 border border-severity-warning/20
+            {% else %}bg-emerald-500/10 border border-emerald-500/20{% endif %}">
+            <svg class="w-5 h-5
+                {% if report.overall_status == 'critical' %}text-severity-critical
+                {% elif report.overall_status == 'needs_attention' %}text-severity-warning
+                {% else %}text-emerald-400{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {% if report.overall_status == 'critical' %}
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                {% elif report.overall_status == 'needs_attention' %}
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                {% else %}
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                {% endif %}
+            </svg>
+            <span class="text-sm font-medium
+                {% if report.overall_status == 'critical' %}text-severity-critical
+                {% elif report.overall_status == 'needs_attention' %}text-severity-warning
+                {% else %}text-emerald-400{% endif %}">
+                {{ report.get_overall_status_display }}
+                {% if report.estimated_fix_time %}
+                &middot; {% translate "Est. fix:" %} {{ report.estimated_fix_time }}
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Report Sections -->
+    <div class="space-y-6">
+        <!-- Executive Summary -->
+        {% if report.summary %}
+        <div class="bg-background-card border border-border rounded-2xl p-6">
+            <h2 class="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                {% translate "Executive Summary" %}
+            </h2>
+            <p class="text-sm text-foreground-muted leading-relaxed">{{ report.summary }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Root Cause -->
+        {% if report.root_cause %}
+        <div class="bg-background-card border border-border rounded-2xl p-6">
+            <h2 class="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                {% translate "Root Cause" %}
+            </h2>
+            <p class="text-sm text-foreground-muted leading-relaxed">{{ report.root_cause }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Detailed Explanation -->
+        {% if report.report_data.detailed_explanation %}
+        <div class="bg-background-card border border-border rounded-2xl p-6">
+            <h2 class="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                {% translate "Detailed Explanation" %}
+            </h2>
+            <div class="text-sm text-foreground-muted leading-relaxed prose prose-invert prose-sm max-w-none">
+                {{ report.report_data.detailed_explanation|linebreaksbr }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Recommendations -->
+        {% if report.recommendations %}
+        <div class="bg-background-card border border-border rounded-2xl p-6">
+            <h2 class="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                {% translate "Recommended Fixes" %}
+            </h2>
+            <div class="space-y-4">
+                {% for rec in report.recommendations %}
+                <div class="flex gap-4 p-4 bg-background rounded-xl border border-border/50">
+                    <div class="flex-shrink-0 w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
+                        <span class="text-xs font-bold text-accent">{{ rec.priority|default:forloop.counter }}</span>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-foreground mb-1">{{ rec.title }}</h3>
+                        <p class="text-sm text-foreground-muted leading-relaxed">{{ rec.description }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Things to Verify -->
+        {% if report.report_data.things_to_verify %}
+        <div class="bg-background-card border border-border rounded-2xl p-6">
+            <h2 class="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                {% translate "Things to Verify" %}
+            </h2>
+            <div class="space-y-2">
+                {% for item in report.report_data.things_to_verify %}
+                <label class="flex items-start gap-3 p-3 bg-background rounded-xl border border-border/50 cursor-pointer hover:border-border-hover transition-colors group">
+                    <input type="checkbox" class="mt-0.5 w-4 h-4 rounded border-border bg-background-elevated text-accent focus:ring-accent/50 accent-accent">
+                    <div class="flex-1">
+                        <span class="text-sm text-foreground-muted group-hover:text-foreground transition-colors">{{ item.item }}</span>
+                        {% if item.importance == 'required' %}
+                        <span class="ml-2 text-2xs font-medium text-severity-error">{% translate "Required" %}</span>
+                        {% endif %}
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Potential Risks -->
+        {% if report.report_data.potential_risks %}
+        <div class="bg-background-card border border-severity-warning/20 rounded-2xl p-6">
+            <h2 class="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+                <svg class="w-4 h-4 text-severity-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                {% translate "Potential Risks" %}
+            </h2>
+            <p class="text-sm text-foreground-muted leading-relaxed">{{ report.report_data.potential_risks }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Documentation -->
+        {% if report.documentation %}
+        <div class="bg-background-card border border-border rounded-2xl p-6">
+            <h2 class="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                {% translate "Related Documentation" %}
+            </h2>
+            <div class="space-y-2">
+                {% for doc in report.documentation %}
+                <a href="{{ doc.url }}" target="_blank" rel="noopener"
+                   class="flex items-center gap-3 p-3 bg-background rounded-xl border border-border/50 hover:border-accent/30 hover:bg-accent-muted transition-all group">
+                    <svg class="w-4 h-4 text-foreground-subtle group-hover:text-accent transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    <span class="text-sm text-foreground-muted group-hover:text-foreground transition-colors">{{ doc.title }}</span>
+                    <svg class="w-3 h-3 text-foreground-subtle ml-auto flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Raw Input Toggle -->
+    <div class="mt-8 pt-8 border-t border-border" x-data="{ show: false }">
+        <button @click="show = !show" class="flex items-center gap-2 text-sm text-foreground-subtle hover:text-foreground transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            <span>{% translate "View Original Input" %}</span>
+            <svg class="w-3.5 h-3.5 transition-transform" :class="show ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div x-show="show" x-transition class="mt-4">
+            <pre class="bg-background-elevated border border-border rounded-xl p-4 text-xs font-mono text-foreground-muted overflow-x-auto"><code>{{ task.input_raw }}</code></pre>
+        </div>
+    </div>
+
+    <!-- New Analysis -->
+    <div class="mt-12 text-center">
+        <a href="{% url 'landing' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-accent-hover shadow-glow transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            {% translate "New Analysis" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

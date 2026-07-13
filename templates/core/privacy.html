@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h1 class="text-3xl font-bold text-foreground mb-8">{% translate "Privacy Policy" %}</h1>
+    <div class="prose prose-invert max-w-none">
+        <p class="text-foreground-muted">{% translate "This Privacy Policy describes how DevLens handles your data." %}</p>
+        <h2 class="text-xl font-semibold text-foreground mt-8 mb-4">{% translate "Data We Collect" %}</h2>
+        <p class="text-foreground-muted">{% translate "We collect the technical input you provide for analysis, along with basic account information if you register." %}</p>
+        <h2 class="text-xl font-semibold text-foreground mt-8 mb-4">{% translate "How We Use Data" %}</h2>
+        <p class="text-foreground-muted">{% translate "Your input is processed by AI models to generate analysis reports. We do not share your data with third parties." %}</p>
+    </div>
+</div>
+{% endblock %}
