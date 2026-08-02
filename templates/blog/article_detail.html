@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block content %}
+{% with translation=article.get_translation %}
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <!-- Breadcrumb -->
     <nav class="flex items-center gap-2 text-sm text-foreground-muted mb-8">
@@ -11,7 +12,7 @@
         <a href="{% url 'blog-category' article.category.slug %}" class="hover:text-foreground transition-colors">{{ article.category.translated_name }}</a>
         {% endif %}
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        <span class="text-foreground truncate max-w-[200px]">{{ article.translated_title }}</span>
+        <span class="text-foreground truncate max-w-[200px]">{{ translation.title }}</span>
     </nav>
 
     <!-- Article Header -->
@@ -26,9 +27,11 @@
                 {{ article.published_at|date:"F j, Y" }}
             </time>
         </div>
-        <h1 class="text-3xl sm:text-4xl font-bold text-foreground mb-4 leading-tight">{{ article.translated_title }}</h1>
-        {% if article.excerpt %}
-        <p class="text-lg text-foreground-muted leading-relaxed">{{ article.translated_excerpt }}</p>
+        <h1 class="text-3xl sm:text-4xl font-bold text-foreground mb-4 leading-tight">{{ translation.title }}</h1>
+        {% if translation.excerpt %}
+            <p class="text-lg text-foreground-muted leading-relaxed">
+                {{ translation.excerpt }}
+            </p>
         {% endif %}
     </header>
 
@@ -51,7 +54,7 @@
 
     <!-- Content -->
     <article class="prose prose-invert prose-lg max-w-none">
-        {{ article.translated_html|safe }}
+        {{ translation.rendered_html|safe }}
     </article>
 
     <!-- Tags -->
@@ -72,7 +75,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {% for ra in related_articles %}
             <a href="{% url 'blog-article' ra.slug %}" class="bg-background-card border border-border rounded-xl p-4 hover:border-border-hover transition-all group">
-                <p class="text-sm font-medium text-foreground group-hover:text-accent transition-colors mb-1">{{ ra.translated_title }}</p>
+                <p class="text-sm font-medium text-foreground group-hover:text-accent transition-colors mb-1">{{ ra.get_translation.title }}</p>
                 <p class="text-2xs text-foreground-subtle">{{ ra.published_at|date:"M j, Y" }}</p>
             </a>
             {% endfor %}
@@ -80,4 +83,5 @@
     </div>
     {% endif %}
 </div>
+{% endwith %}
 {% endblock %}

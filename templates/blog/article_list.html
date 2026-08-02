@@ -44,9 +44,9 @@
                 <span class="text-2xs text-foreground-subtle">{{ article.published_at|date:"M j, Y" }}</span>
             </div>
             <h2 class="text-lg font-semibold text-foreground mb-2 group-hover:text-accent transition-colors">
-                <a href="{% url 'blog-article' article.slug %}">{{ article.translated_title }}</a>
+                <a href="{% url 'blog-article' article.slug %}">{{ article.get_translation.title }}</a>
             </h2>
-            <p class="text-sm text-foreground-muted leading-relaxed mb-4">{{ article.translated_excerpt }}</p>
+            <p class="text-sm text-foreground-muted leading-relaxed mb-4">{{ article.get_translation.excerpt }}</p>
             <a href="{% url 'blog-article' article.slug %}" class="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:text-accent-hover transition-colors">
                 {% translate "Read more" %}
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>

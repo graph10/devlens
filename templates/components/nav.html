@@ -31,6 +31,7 @@
 
             <!-- Right Side -->
             <div class="hidden md:flex items-center gap-2">
+                {% if not user.is_authenticated %}
                 <!-- Language Switch -->
                 <form id="lang-en" action="{% url 'set_language' %}" method="post" class="hidden">
                     {% csrf_token %}
@@ -71,6 +72,8 @@
                     </button>
 
                 </div>
+
+                {% endif %}
 
                 {% if user.is_authenticated %}
                 <!-- User Menu -->
