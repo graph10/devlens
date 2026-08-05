@@ -1,78 +1,76 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% block theme %}theme-dark{% endblock %}
 {% block content %}
-<div class="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
-    <div class="w-full max-w-lg">
-        <div class="mb-8 text-center">
-            <span class="dl-eyebrow text-accent">{% translate "Account" %}</span>
-            <h1 class="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground">{% translate "Profile" %}</h1>
-            <p class="mt-2 text-sm text-foreground-muted">{% translate "Manage your account settings." %}</p>
-        </div>
-        <!-- Account -->
-        <div class="mb-6 rounded-2xl border border-border bg-background-card p-6 shadow-soft sm:p-8">
-            <h2 class="text-base font-semibold text-foreground">{% translate "Account" %}</h2>
-            <p class="mt-1 text-sm text-foreground-muted">{% translate "Update your email address. Current password is required only if you change it." %}</p>
-            <form method="post" class="mt-6">
-                {% csrf_token %}
-                <div class="space-y-5">
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-foreground-muted" for="{{ email_form.email.id_for_label }}">{{ email_form.email.label }}</label>
-                        {{ email_form.email }}
-                        {% if email_form.email.errors %}<p class="mt-1.5 text-xs text-severity-error">{{ email_form.email.errors|join:" " }}</p>{% endif %}
-                    </div>
-                    <div id="password-wrapper" data-error="{% if email_form.password.errors %}true{% else %}false{% endif %}" class="{% if not email_form.password.errors %}hidden{% endif %}">
-                        <label class="mb-1.5 block text-sm font-medium text-foreground-muted" for="{{ email_form.password.id_for_label }}">{{ email_form.password.label }}</label>
-                        {{ email_form.password }}
-                        {% if email_form.password.errors %}<p class="mt-1.5 text-xs text-severity-error">{{ email_form.password.errors|join:" " }}</p>{% endif %}
-                    </div>
-                    <button type="submit" name="save_email" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-sm font-semibold text-background shadow-glow transition-all hover:bg-accent-hover">{% translate "Save Email" %}</button>
-                </div>
-            </form>
-        </div>
-        <!-- Preferences -->
-        <div class="mb-6 rounded-2xl border border-border bg-background-card p-6 shadow-soft sm:p-8">
-            <h2 class="text-base font-semibold text-foreground">{% translate "Preferences" %}</h2>
-            <p class="mt-1 text-sm text-foreground-muted">{% translate "Choose your preferred interface language." %}</p>
-            <form method="post" class="mt-6">
-                {% csrf_token %}
-                <div class="space-y-5">
-                    <div>
-                        <label class="mb-1.5 block text-sm font-medium text-foreground-muted">{{ language_form.language.label }}</label>
-                        <div class="relative">
-                            <select id="language-select" name="language" class="hidden">
-                                {% for value, text in language_form.language.field.choices %}
-                                <option value="{{ value }}" {% if value == language_form.language.value %}selected{% endif %}>{{ text }}</option>
-                                {% endfor %}
-                            </select>
-                            <button type="button" id="language-button" class="flex w-full items-center justify-between rounded-xl border border-border bg-background-card px-4 py-3 text-sm text-foreground transition hover:border-accent">
-                                <span id="language-label">{{ language_form.language.value|upper }}</span>
-                                <svg id="language-arrow" class="h-4 w-4 text-foreground-muted transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                            </button>
-                            <div id="language-menu" class="absolute z-20 mt-2 hidden max-h-60 w-full overflow-auto rounded-xl border border-border bg-background-card p-1 shadow-soft scroll-thin"></div>
-                        </div>
-                        {% if language_form.language.errors %}<p class="mt-1.5 text-xs text-severity-error">{{ language_form.language.errors|join:" " }}</p>{% endif %}
-                    </div>
-                    <button type="submit" name="save_language" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-sm font-semibold text-background shadow-glow transition-all hover:bg-accent-hover">{% translate "Save Language" %}</button>
-                </div>
-            </form>
-        </div>
-        <!-- Security -->
-        <div class="rounded-2xl border border-border bg-background-card p-6 shadow-soft sm:p-8">
-            <h2 class="text-base font-semibold text-foreground">{% translate "Security" %}</h2>
-            <p class="mt-1 text-sm text-foreground-muted">{% translate "Keep your account secure by updating your password regularly." %}</p>
-            <a href="{% url 'password_change' %}" class="mt-5 flex items-center justify-between rounded-xl border border-border bg-background px-4 py-4 transition hover:border-accent">
+<div class="mx-auto max-w-lg px-4 py-12">
+    <div class="mb-8 text-center">
+        <span class="dl-eyebrow text-accent">{% translate "Account" %}</span>
+        <h1 class="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground">{% translate "Profile" %}</h1>
+        <p class="mt-2 text-sm text-foreground-muted">{% translate "Manage your account settings." %}</p>
+    </div>
+    <!-- Account -->
+    <div class="mb-6 rounded-2xl border border-border bg-background-card p-6 shadow-soft sm:p-8">
+        <h2 class="text-base font-semibold text-foreground">{% translate "Account" %}</h2>
+        <p class="mt-1 text-sm text-foreground-muted">{% translate "Update your email address. Current password is required only if you change it." %}</p>
+        <form method="post" class="mt-6">
+            {% csrf_token %}
+            <div class="space-y-5">
                 <div>
-                    <div class="text-sm font-medium text-foreground">{% translate "Password" %}</div>
-                    <div class="text-sm text-foreground-muted">{% translate "Change your account password" %}</div>
+                    <label class="mb-1.5 block text-sm font-medium text-foreground-muted" for="{{ email_form.email.id_for_label }}">{{ email_form.email.label }}</label>
+                    {{ email_form.email }}
+                    {% if email_form.email.errors %}<p class="mt-1.5 text-xs text-severity-error">{{ email_form.email.errors|join:" " }}</p>{% endif %}
                 </div>
-                <svg class="h-5 w-5 text-foreground-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </a>
-        </div>
+                <div id="password-wrapper" data-error="{% if email_form.password.errors %}true{% else %}false{% endif %}" class="{% if not email_form.password.errors %}hidden{% endif %}">
+                    <label class="mb-1.5 block text-sm font-medium text-foreground-muted" for="{{ email_form.password.id_for_label }}">{{ email_form.password.label }}</label>
+                    {{ email_form.password }}
+                    {% if email_form.password.errors %}<p class="mt-1.5 text-xs text-severity-error">{{ email_form.password.errors|join:" " }}</p>{% endif %}
+                </div>
+                <button type="submit" name="save_email" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-sm font-semibold text-background shadow-glow transition-all hover:bg-accent-hover">{% translate "Save Email" %}</button>
+            </div>
+        </form>
+    </div>
+    <!-- Preferences -->
+    <div class="mb-6 rounded-2xl border border-border bg-background-card p-6 shadow-soft sm:p-8">
+        <h2 class="text-base font-semibold text-foreground">{% translate "Preferences" %}</h2>
+        <p class="mt-1 text-sm text-foreground-muted">{% translate "Choose your preferred interface language." %}</p>
+        <form method="post" class="mt-6">
+            {% csrf_token %}
+            <div class="space-y-5">
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-foreground-muted">{{ language_form.language.label }}</label>
+                    <div class="relative">
+                        <select id="language-select" name="language" class="hidden">
+                            {% for value, text in language_form.language.field.choices %}
+                            <option value="{{ value }}" {% if value == language_form.language.value %}selected{% endif %}>{{ text }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" id="language-button" class="flex w-full items-center justify-between rounded-xl border border-border bg-background-card px-4 py-3 text-sm text-foreground transition hover:border-accent">
+                            <span id="language-label">{{ language_form.language.value|upper }}</span>
+                            <svg id="language-arrow" class="h-4 w-4 text-foreground-muted transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div id="language-menu" class="absolute z-20 mt-2 hidden max-h-60 w-full overflow-auto rounded-xl border border-border bg-background-card p-1 shadow-soft scroll-thin"></div>
+                    </div>
+                    {% if language_form.language.errors %}<p class="mt-1.5 text-xs text-severity-error">{{ language_form.language.errors|join:" " }}</p>{% endif %}
+                </div>
+                <button type="submit" name="save_language" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-sm font-semibold text-background shadow-glow transition-all hover:bg-accent-hover">{% translate "Save Language" %}</button>
+            </div>
+        </form>
+    </div>
+    <!-- Security -->
+    <div class="rounded-2xl border border-border bg-background-card p-6 shadow-soft sm:p-8">
+        <h2 class="text-base font-semibold text-foreground">{% translate "Security" %}</h2>
+        <p class="mt-1 text-sm text-foreground-muted">{% translate "Keep your account secure by updating your password regularly." %}</p>
+        <a href="{% url 'password_change' %}" class="mt-5 flex items-center justify-between rounded-xl border border-border bg-background px-4 py-4 transition hover:border-accent">
+            <div>
+                <div class="text-sm font-medium text-foreground">{% translate "Password" %}</div>
+                <div class="text-sm text-foreground-muted">{% translate "Change your account password" %}</div>
+            </div>
+            <svg class="h-5 w-5 text-foreground-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
     </div>
 </div>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    /* Reveal current-password field when the email is changed */
     var emailInput = document.getElementById("email-input");
     var passwordBlock = document.getElementById("password-wrapper");
     var originalEmail = "{{ request.user.email|escapejs }}";
@@ -84,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
         else { passwordBlock.classList.add("hidden"); }
     }
     if (emailInput) { emailInput.addEventListener("input", syncPassword); syncPassword(); }
-    /* Custom language dropdown (mirrors the hidden real <select name="language">) */
     var select = document.getElementById("language-select");
     var btn = document.getElementById("language-button");
     var label = document.getElementById("language-label");
@@ -97,10 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
             item.type = "button";
             item.textContent = o.textContent;
             item.className = "block w-full rounded-lg px-3 py-2 text-left text-sm text-foreground-muted transition-colors hover:bg-background-hover hover:text-foreground";
-            if (o.value === current) {
-                if (label) label.textContent = o.textContent;
-                item.classList.add("text-accent", "font-medium");
-            }
+            if (o.value === current) { if (label) label.textContent = o.textContent; item.classList.add("text-accent", "font-medium"); }
             item.addEventListener("click", function () {
                 select.value = o.value;
                 if (label) label.textContent = o.textContent;
@@ -111,17 +105,8 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             menu.appendChild(item);
         });
-        btn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            menu.classList.toggle("hidden");
-            if (arrow) arrow.classList.toggle("rotate-180");
-        });
-        document.addEventListener("click", function (e) {
-            if (!btn.contains(e.target) && !menu.contains(e.target)) {
-                menu.classList.add("hidden");
-                if (arrow) arrow.classList.remove("rotate-180");
-            }
-        });
+        btn.addEventListener("click", function (e) { e.stopPropagation(); menu.classList.toggle("hidden"); if (arrow) arrow.classList.toggle("rotate-180"); });
+        document.addEventListener("click", function (e) { if (!btn.contains(e.target) && !menu.contains(e.target)) { menu.classList.add("hidden"); if (arrow) arrow.classList.remove("rotate-180"); } });
     }
 });
 </script>

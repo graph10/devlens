@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% load i18n humanize %}
+{% block theme %}theme-dark{% endblock %}
 {% block content %}
 <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-    <!-- Header -->
     <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
             <span class="dl-eyebrow text-accent">{% translate "Workspace" %}</span>
@@ -41,15 +41,11 @@
     <!-- Plan -->
     <div class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-background-card p-5">
         <div class="flex items-center gap-3">
-            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider ring-1 ring-inset
-                {% if subscription and subscription.status == 'active' %}bg-severity-info/10 text-severity-info ring-severity-info/25{% else %}bg-background-elevated text-foreground-muted ring-border{% endif %}">
-                {% if subscription and subscription.status == 'active' %}Pro{% else %}Free{% endif %}
-            </span>
+            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider ring-1 ring-inset {% if subscription and subscription.status == 'active' %}bg-severity-info/10 text-severity-info ring-severity-info/25{% else %}bg-background-elevated text-foreground-muted ring-border{% endif %}">{% if subscription and subscription.status == 'active' %}Pro{% else %}Free{% endif %}</span>
             <p class="text-sm text-foreground-muted">{% translate "Current plan" %}</p>
         </div>
         {% if not subscription or subscription.status != 'active' %}
-        <a href="{% url 'pricing' %}" class="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-border-hover hover:bg-background-elevated">
-            {% translate "Upgrade to Pro" %}
+        <a href="{% url 'pricing' %}" class="inline-flex items-center gap-1.5 rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground transition-all hover:border-border-hover hover:bg-background-elevated">{% translate "Upgrade to Pro" %}
             <svg class="h-4 w-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </a>
         {% endif %}
@@ -58,9 +54,7 @@
     <div class="mt-10">
         <div class="mb-4 flex items-center justify-between">
             <h2 class="text-base font-semibold tracking-tight text-foreground">{% translate "Recent Analyses" %}</h2>
-            {% if cards.0.value > 0 %}
-            <a href="{% url 'analyze' %}" class="text-sm font-medium text-accent transition-colors hover:text-accent-hover">{% translate "Analyze Something" %}</a>
-            {% endif %}
+            {% if cards.0.value > 0 %}<a href="{% url 'analyze' %}" class="text-sm font-medium text-accent transition-colors hover:text-accent-hover">{% translate "Analyze Something" %}</a>{% endif %}
         </div>
         {% if recent_tasks %}
         <div class="overflow-hidden rounded-2xl border border-border bg-background-card">
@@ -77,14 +71,10 @@
         </div>
         {% else %}
         <div class="rounded-2xl border border-dashed border-border bg-background-card px-6 py-14 text-center">
-            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-background">
-                <svg class="h-5 w-5 text-foreground-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </div>
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-background"><svg class="h-5 w-5 text-foreground-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
             <h3 class="text-base font-medium text-foreground">{% translate "No analyses yet." %}</h3>
             <p class="mt-1 text-sm text-foreground-muted">{% translate "Run your first analysis to see it here." %}</p>
-            <a href="{% url 'analyze' %}" class="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors hover:text-accent-hover">{% translate "Run your first analysis" %}
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </a>
+            <a href="{% url 'analyze' %}" class="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors hover:text-accent-hover">{% translate "Run your first analysis" %}<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
         </div>
         {% endif %}
     </div>

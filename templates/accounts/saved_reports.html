@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n humanize %}
+{% block theme %}theme-dark{% endblock %}
 {% block content %}
 <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
     <div class="mb-8 flex items-center justify-between">
@@ -16,21 +17,16 @@
     <div class="space-y-3">
         {% for sr in reports %}
         <div class="group flex items-center gap-4 rounded-2xl border border-border bg-background-card p-5 transition-all hover:border-border-hover">
-            <span class="h-2.5 w-2.5 shrink-0 rounded-full
-                {% if sr.task.report.severity == 'critical' %}bg-severity-critical
-                {% elif sr.task.report.severity == 'error' %}bg-severity-error
-                {% elif sr.task.report.severity == 'warning' %}bg-severity-warning
-                {% else %}bg-severity-info{% endif %}"></span>
+            <span class="h-2.5 w-2.5 shrink-0 rounded-full {% if sr.task.report.severity == 'critical' %}bg-severity-critical{% elif sr.task.report.severity == 'error' %}bg-severity-error{% elif sr.task.report.severity == 'warning' %}bg-severity-warning{% else %}bg-severity-info{% endif %}"></span>
             <div class="min-w-0 flex-1">
                 <a href="{% url 'report' sr.task.public_id %}" class="block truncate text-sm font-medium text-foreground transition-colors hover:text-accent">{{ sr.title }}</a>
                 <p class="mt-0.5 font-mono text-[11px] text-foreground-subtle">{{ sr.task.input_type|title }} · {{ sr.created_at|naturaltime }}</p>
             </div>
-             <form action="{% url 'delete-saved-report' sr.public_id %}" method="post" class="shrink-0">
+            <form action="{% url 'delete-saved-report' sr.public_id %}" method="post" class="shrink-0">
                 {% csrf_token %}
                 {% translate "Remove this saved report?" as remove_msg %}
                 {% translate "Remove" as remove_label %}
-                <button type="submit" class="flex h-8 w-8 items-center justify-center rounded-lg text-foreground-subtle transition-all hover:bg-severity-error/10 hover:text-severity-error"
-                        onclick="return confirm('{{ remove_msg|escapejs }}')" aria-label="{{ remove_label }}">
+                <button type="submit" class="flex h-8 w-8 items-center justify-center rounded-lg text-foreground-subtle transition-all hover:bg-severity-error/10 hover:text-severity-error" onclick="return confirm('{{ remove_msg|escapejs }}')" aria-label="{{ remove_label }}">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                 </button>
             </form>
@@ -39,14 +35,10 @@
     </div>
     {% else %}
     <div class="rounded-2xl border border-dashed border-border bg-background-card px-6 py-16 text-center">
-        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-background">
-            <svg class="h-5 w-5 text-foreground-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
-        </div>
+        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-background"><svg class="h-5 w-5 text-foreground-subtle" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg></div>
         <h3 class="text-base font-medium text-foreground">{% translate "No saved reports" %}</h3>
         <p class="mt-1 text-sm text-foreground-muted">{% translate "Save important reports for quick access later." %}</p>
-        <a href="{% url 'analyze' %}" class="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors hover:text-accent-hover">{% translate "Run an analysis" %}
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        </a>
+        <a href="{% url 'analyze' %}" class="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors hover:text-accent-hover">{% translate "Run an analysis" %}<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
     </div>
     {% endif %}
 </div>

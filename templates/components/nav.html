@@ -4,43 +4,32 @@
         <div class="flex h-16 items-center justify-between">
             <!-- Logo -->
             <a href="{% url 'landing' %}" class="flex items-center gap-2.5 group">
-                <span class="text-foreground">
-                    <svg class="h-7 w-7" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                        <circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.4" opacity=".9"/>
-                        <line x1="16" y1="1.5" x2="16" y2="6" stroke="currentColor" stroke-width="1.4"/>
-                        <line x1="16" y1="26" x2="16" y2="30.5" stroke="currentColor" stroke-width="1.4"/>
-                        <line x1="1.5" y1="16" x2="6" y2="16" stroke="currentColor" stroke-width="1.4"/>
-                        <line x1="26" y1="16" x2="30.5" y2="16" stroke="currentColor" stroke-width="1.4"/>
-                        <circle cx="16" cy="16" r="4.7" stroke="#e0554b" stroke-width="1.7"/>
-                        <circle cx="16" cy="16" r="1.9" fill="#e0554b"/>
-                    </svg>
-                </span>
-                <span class="font-display text-[18px] font-semibold tracking-tight text-foreground transition-colors group-hover:text-accent">
-                    Dev<span class="text-foreground-muted">Lens</span>
-                </span>
+                <svg class="h-7 w-7 text-foreground" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                    <circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.4" opacity=".9"/>
+                    <line x1="16" y1="1.5" x2="16" y2="6" stroke="currentColor" stroke-width="1.4"/><line x1="16" y1="26" x2="16" y2="30.5" stroke="currentColor" stroke-width="1.4"/>
+                    <line x1="1.5" y1="16" x2="6" y2="16" stroke="currentColor" stroke-width="1.4"/><line x1="26" y1="16" x2="30.5" y2="16" stroke="currentColor" stroke-width="1.4"/>
+                    <circle cx="16" cy="16" r="4.7" stroke="#c8403a" stroke-width="1.7"/><circle cx="16" cy="16" r="1.9" fill="#c8403a"/>
+                </svg>
+                <span class="font-display text-[18px] font-semibold tracking-tight text-foreground transition-colors group-hover:text-accent">Dev<span class="text-foreground-muted">Lens</span></span>
             </a>
             <!-- Desktop links -->
             <div class="hidden items-center gap-1 md:flex">
                 <a href="{% url 'features' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground">{% translate "Features" %}</a>
                 <a href="{% url 'pricing' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground">{% translate "Pricing" %}</a>
-                {% if ENABLE_BLOG %}
-                <a href="{% url 'blog-list' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground">{% translate "Blog" %}</a>
-                {% endif %}
+                {% if ENABLE_BLOG %}<a href="{% url 'blog-list' %}" class="rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground">{% translate "Blog" %}</a>{% endif %}
             </div>
             <!-- Right side -->
             <div class="hidden items-center gap-2 md:flex">
                 {% if not user.is_authenticated %}
-                <!-- Language switch -->
                 <form id="lang-en" action="{% url 'set_language' %}" method="post" class="hidden">{% csrf_token %}<input type="hidden" name="language" value="en"><input type="hidden" name="next" value="{{ request.get_full_path }}"></form>
                 <form id="lang-ru" action="{% url 'set_language' %}" method="post" class="hidden">{% csrf_token %}<input type="hidden" name="language" value="ru"><input type="hidden" name="next" value="{{ request.get_full_path }}"></form>
-                <div class="flex items-center rounded-lg border border-border bg-background-elevated px-1.5 py-1 font-mono text-[11px] font-semibold">
+                <div class="flex items-center rounded-lg border border-border bg-background-elevated px-1 py-1 font-mono text-[11px] font-semibold">
                     <button type="button" onclick="document.getElementById('lang-en').submit()" class="rounded px-1.5 py-0.5 transition-colors {% if LANGUAGE_CODE == 'en' %}bg-background text-foreground{% else %}text-foreground-subtle hover:text-foreground{% endif %}">EN</button>
-                    <span class="px-1 text-border">/</span>
+                    <span class="px-1 text-foreground-subtle">/</span>
                     <button type="button" onclick="document.getElementById('lang-ru').submit()" class="rounded px-1.5 py-0.5 transition-colors {% if LANGUAGE_CODE == 'ru' %}bg-background text-foreground{% else %}text-foreground-subtle hover:text-foreground{% endif %}">RU</button>
                 </div>
                 {% endif %}
                 {% if user.is_authenticated %}
-                <!-- User menu -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-foreground-muted transition-colors hover:bg-background-elevated hover:text-foreground">
                         <span class="flex h-6 w-6 items-center justify-center rounded-full bg-accent/15 font-mono text-[11px] text-accent">{{ user.username|first|upper }}</span>
@@ -57,8 +46,8 @@
                     </div>
                 </div>
                 {% else %}
-                <a href="{% url 'login' %}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-foreground-muted transition-colors hover:text-foreground">{% translate "Log In" %}</a>
-                <a href="{% url 'register' %}" class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-1.5 text-sm font-semibold text-background transition-all hover:bg-accent-hover shadow-glow">{% translate "Get started" %}</a>
+                <a href="{% url 'login' %}" class="rounded-lg px-3 py-1.5 text-sm font-medium text-foreground-muted transition-colors hover:text-foreground">{% translate "Sign in" %}</a>
+                <a href="{% url 'register' %}" class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-1.5 text-sm font-semibold text-white shadow-glow transition-all hover:bg-accent-hover">{% translate "Get started" %}</a>
                 {% endif %}
             </div>
             <!-- Mobile toggle -->
@@ -76,8 +65,8 @@
             <a href="{% url 'dashboard' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-background-elevated hover:text-foreground">{% translate "Dashboard" %}</a>
             <a href="{% url 'profile' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-background-elevated hover:text-foreground">{% translate "Profile" %}</a>
             {% else %}
-            <a href="{% url 'login' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-background-elevated hover:text-foreground">{% translate "Log In" %}</a>
-            <a href="{% url 'register' %}" class="block rounded-lg bg-accent px-3 py-2 text-center text-sm font-semibold text-background">{% translate "Get started" %}</a>
+            <a href="{% url 'login' %}" class="block rounded-lg px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-background-elevated hover:text-foreground">{% translate "Sign in" %}</a>
+            <a href="{% url 'register' %}" class="block rounded-lg bg-accent px-3 py-2 text-center text-sm font-semibold text-white">{% translate "Get started" %}</a>
             {% endif %}
         </div>
     </div>

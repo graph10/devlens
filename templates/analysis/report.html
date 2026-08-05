@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n humanize %}
+{% block theme %}theme-dark{% endblock %}
 {% block content %}
 <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
     <!-- Action bar -->
@@ -14,13 +15,11 @@
                 {% include "analysis/partials/save_button.html" with is_saved=is_saved public_id=task.public_id %}
             </div>
             {% endif %}
-            <a href="{% url 'export-markdown' task.public_id %}"
-               class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background-elevated px-3 py-1.5 text-xs font-medium text-foreground-muted transition-all hover:border-border-hover hover:text-foreground">
+            <a href="{% url 'export-markdown' task.public_id %}" class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background-elevated px-3 py-1.5 text-xs font-medium text-foreground-muted transition-all hover:border-border-hover hover:text-foreground">
                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 {% translate "Copy" %}
             </a>
-            <a href="{% url 'export-markdown' task.public_id %}"
-               class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background-elevated px-3 py-1.5 text-xs font-medium text-foreground-muted transition-all hover:border-border-hover hover:text-foreground">
+            <a href="{% url 'export-markdown' task.public_id %}" class="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background-elevated px-3 py-1.5 text-xs font-medium text-foreground-muted transition-all hover:border-border-hover hover:text-foreground">
                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 {% translate "Export MD" %}
             </a>
@@ -32,16 +31,12 @@
         <!-- Header -->
         <header class="relative flex items-center justify-between border-b border-border px-5 py-3">
             <div class="flex items-center gap-2.5">
-                <svg class="h-4 w-4 text-foreground-muted" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                    <circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.6"/><circle cx="16" cy="16" r="4.7" stroke="#e0554b" stroke-width="1.8"/><circle cx="16" cy="16" r="1.9" fill="#e0554b"/>
-                </svg>
+                <svg class="h-4 w-4 text-foreground-muted" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.6"/><circle cx="16" cy="16" r="4.7" stroke="#e0554b" stroke-width="1.8"/><circle cx="16" cy="16" r="1.9" fill="#e0554b"/></svg>
                 <span class="font-mono text-[11px] text-foreground-muted">{{ task.public_id }}</span>
             </div>
             <div class="flex items-center gap-3">
                 <span class="hidden font-mono text-[11px] text-foreground-subtle sm:inline">{{ task.input_type|default:"unknown"|upper }}</span>
-                <span class="inline-flex items-center gap-1.5 rounded-full bg-severity-info/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-severity-info ring-1 ring-inset ring-severity-info/25">
-                    <span class="h-1.5 w-1.5 rounded-full bg-severity-info"></span>{% translate "Complete" %}
-                </span>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-severity-info/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-severity-info ring-1 ring-inset ring-severity-info/25"><span class="h-1.5 w-1.5 rounded-full bg-severity-info"></span>{% translate "Complete" %}</span>
             </div>
         </header>
         <div class="relative">
@@ -49,8 +44,7 @@
             <div class="flex flex-wrap items-center gap-x-7 gap-y-3 border-b border-border bg-background/40 px-5 py-4">
                 <div>
                     <p class="dl-eyebrow mb-1 text-foreground-subtle">{% translate "Severity" %}</p>
-                    <span class="inline-flex items-center gap-1.5 font-mono text-[12px] font-semibold uppercase tracking-wider
-                        {% if report.severity == 'critical' %}text-severity-critical{% elif report.severity == 'error' %}text-severity-error{% elif report.severity == 'warning' %}text-severity-warning{% else %}text-severity-info{% endif %}">
+                    <span class="inline-flex items-center gap-1.5 font-mono text-[12px] font-semibold uppercase tracking-wider {% if report.severity == 'critical' %}text-severity-critical{% elif report.severity == 'error' %}text-severity-error{% elif report.severity == 'warning' %}text-severity-warning{% else %}text-severity-info{% endif %}">
                         <span class="h-2 w-2 rounded-full {% if report.severity == 'critical' %}bg-severity-critical{% elif report.severity == 'error' %}bg-severity-error{% elif report.severity == 'warning' %}bg-severity-warning{% else %}bg-severity-info{% endif %}"></span>
                         {{ report.get_severity_display|default:report.severity|default:"info" }}
                     </span>
@@ -58,9 +52,7 @@
                 <div>
                     <p class="dl-eyebrow mb-1 text-foreground-subtle">{% translate "Confidence" %}</p>
                     <div class="flex items-center gap-2">
-                        <div class="h-1.5 w-24 overflow-hidden rounded-full bg-background-elevated">
-                            <div class="h-full w-[{{ report.confidence|default:0 }}%] rounded-full bg-accent transition-all"></div>
-                        </div>
+                        <div class="h-1.5 w-24 overflow-hidden rounded-full bg-background-elevated"><div class="h-full w-[{{ report.confidence|default:0 }}%] rounded-full bg-accent transition-all"></div></div>
                         <span class="font-mono text-[12px] text-foreground-muted">{{ report.confidence }}%</span>
                     </div>
                 </div>
@@ -74,22 +66,17 @@
                 </div>
             </div>
             <!-- Overall status -->
-            <div class="flex items-center gap-3 border-b border-border px-5 py-3.5
-                {% if report.overall_status == 'critical' %}bg-severity-critical/10{% elif report.overall_status == 'needs_attention' %}bg-severity-warning/10{% else %}bg-severity-info/10{% endif %}">
+            <div class="flex items-center gap-3 border-b border-border px-5 py-3.5 {% if report.overall_status == 'critical' %}bg-severity-critical/10{% elif report.overall_status == 'needs_attention' %}bg-severity-warning/10{% else %}bg-severity-info/10{% endif %}">
                 <svg class="h-5 w-5 {% if report.overall_status == 'critical' %}text-severity-critical{% elif report.overall_status == 'needs_attention' %}text-severity-warning{% else %}text-severity-info{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {% if report.overall_status == 'critical' or report.overall_status == 'needs_attention' %}
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                    {% else %}
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    {% endif %}
+                    {% if report.overall_status == 'critical' or report.overall_status == 'needs_attention' %}<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    {% else %}<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>{% endif %}
                 </svg>
                 <span class="text-sm font-medium {% if report.overall_status == 'critical' %}text-severity-critical{% elif report.overall_status == 'needs_attention' %}text-severity-warning{% else %}text-severity-info{% endif %}">
-                    {{ report.get_overall_status_display|default:report.overall_status }}
-                    {% if report.estimated_fix_time %}<span class="text-foreground-subtle"> · {% translate "Est. fix:" %} {{ report.estimated_fix_time }}</span>{% endif %}
+                    {{ report.get_overall_status_display|default:report.overall_status }}{% if report.estimated_fix_time %}<span class="text-foreground-subtle"> · {% translate "Est. fix:" %} {{ report.estimated_fix_time }}</span>{% endif %}
                 </span>
                 <span class="ml-auto font-mono text-[11px] text-foreground-subtle">{{ task.created_at|naturaltime }}{% if task.processing_time_ms %} · {{ task.processing_time_ms }}ms{% endif %}</span>
             </div>
-            <!-- Executive Summary -->
+            <!-- L 01 Executive Summary -->
             {% if report.summary %}
             <section class="grid grid-cols-[72px_1fr] gap-4 px-5 py-5">
                 <div class="space-y-1 pt-0.5">
