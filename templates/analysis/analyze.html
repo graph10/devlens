@@ -1,50 +1,38 @@
 {% extends "base.html" %}
 {% load i18n %}
-
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="text-center mb-8">
-        <h1 class="text-2xl font-bold text-foreground mb-2">{% translate "Analyze" %}</h1>
-        <p class="text-sm text-foreground-muted">{% translate "Paste any technical output below. We'll detect the type and provide a structured report." %}</p>
-    </div>
-
-    <!-- Analysis Form -->
+<div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="mb-8 text-center">
+        <span class="dl-eyebrow text-accent">{% translate "Workspace" %}</span>
+        <h1 class="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{% translate "Analyze" %}</h1>
+        <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-foreground-muted">{% translate "Paste any technical output below. We'll detect the type and provide a structured report." %}</p>
+    </header>
     <div id="analysis-form-container">
         <form action="{% url 'analyze' %}" method="post"
-              class="relative">
+              class="dl-viewfinder relative rounded-2xl border border-border bg-background-card p-1 shadow-soft transition-colors focus-within:border-accent/50"
+              onsubmit="var s=document.getElementById('analyze-spinner');if(s)s.classList.remove('hidden');">
             {% csrf_token %}
-
-            <div class="relative bg-background-card border border-border rounded-2xl p-1 shadow-soft hover:border-border-hover transition-colors focus-within:border-accent/50 focus-within:shadow-glow">
-                <textarea
-                    name="input"
-                    placeholder="{% translate 'Paste a Python traceback, Docker log, SQL error, REST API response, Git output, or anything else...' %}"
-                    class="w-full bg-transparent text-foreground placeholder-foreground-subtle text-sm leading-relaxed p-5 min-h-[300px] max-h-[600px] resize-y outline-none font-mono"
-                    required
-                ></textarea>
-
-                <div class="flex items-center justify-between px-4 py-3 border-t border-border/50">
-                    <div class="flex items-center gap-2 text-xs text-foreground-subtle">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span>{% translate "Auto-detection enabled" %}</span>
-                    </div>
-                    <button type="submit"
-                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-accent text-white text-sm font-semibold rounded-xl hover:bg-accent-hover shadow-glow transition-all">
-                        <span>{% translate "Analyze" %}</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </button>
+            <textarea name="input" required
+                placeholder="{% translate 'Paste a Python traceback, Docker log, SQL error, REST API response, Git output, or anything else...' %}"
+                class="scroll-thin block max-h-[600px] min-h-[300px] w-full resize-y bg-transparent p-5 font-mono text-sm leading-relaxed text-foreground outline-none placeholder:text-foreground-subtle"></textarea>
+            <div class="flex items-center justify-between border-t border-border/60 px-4 py-3">
+                <div class="flex items-center gap-2 text-xs text-foreground-subtle">
+                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>{% translate "Auto-detection enabled" %}</span>
                 </div>
+                <button type="submit"
+                        class="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-background shadow-glow transition-all hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50">
+                    <svg id="analyze-spinner" class="htmx-indicator hidden h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                    <span>{% translate "Analyze" %}</span>
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
             </div>
         </form>
-
-        <!-- Examples -->
         <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
-            <span class="text-xs text-foreground-subtle mr-1">{% translate "Try:" %}</span>
+            <span class="mr-1 text-xs text-foreground-subtle">{% translate "Try:" %}</span>
             {% for key, label in examples.items %}
-            <button
-                hx-get="{% url 'example-text' key %}"
-                hx-target="textarea[name='input']"
-                hx-swap="innerHTML"
-                class="px-3 py-1.5 text-xs font-medium rounded-lg bg-background-elevated border border-border text-foreground-muted hover:text-foreground hover:border-border-hover hover:bg-background-hover transition-all">
+            <button hx-get="{% url 'example-text' key %}" hx-target="textarea[name='input']" hx-swap="innerHTML"
+                    class="rounded-lg border border-border bg-background-elevated px-3 py-1.5 text-xs font-medium text-foreground-muted transition-all hover:border-border-hover hover:bg-background-hover hover:text-foreground">
                 {{ label }}
             </button>
             {% endfor %}

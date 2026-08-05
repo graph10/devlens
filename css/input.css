@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-border-hover;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-accent/30 text-foreground;
+  }
+}
+
+@layer components {
+  /* Form inputs */
+  .form-input {
+    @apply bg-background border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-foreground-subtle outline-none transition-all duration-200;
+  }
+
+  .form-select {
+    @apply w-full bg-background-elevated border border-border rounded-xl px-4 py-2.5 text-sm text-foreground outline-none transition-all focus:border-accent/50 focus:ring-1 focus:ring-accent/20 appearance-none;
+  }
+
+  .form-input:focus,
+  .form-select:focus {
+    @apply border-accent
+    ring-4
+    ring-accent/10;
+  }
+
+  .form-input:hover{
+    @apply border-border-hover;
+  }
+
+  /* HTMX indicator */
+  .htmx-indicator {
+    @apply inline;
+  }
+  .htmx-request .htmx-indicator {
+    @apply inline;
+  }
+  .htmx-request.htmx-indicator {
+    @apply inline;
+  }
+
+  /* Code blocks */
+  pre {
+    @apply bg-background-elevated border border-border rounded-xl p-4 overflow-x-auto text-sm;
+  }
+
+  code {
+    @apply font-mono text-sm;
+  }
+
+  /* Inline code */
+  :not(pre) > code {
+    @apply bg-background-elevated px-1.5 py-0.5 rounded text-xs text-accent;
+  }
+}

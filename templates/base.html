@@ -1,66 +1,114 @@
-{% load i18n static %}
-<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}" class="dark">
+{% load static i18n %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#100f0d">
     <title>{{ meta_title|default:"DevLens" }}</title>
-
-    {% include "includes/seo_meta.html" %}
-
-    <!-- Fonts -->
+    <meta name="description" content="{% translate 'DevLens — engineering-grade technical analysis for errors, logs and failures. Paste it in. Read the conclusion.' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-    <!-- TailwindCSS -->
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-
-    <!-- HTMX -->
-    <script src="{% static 'js/htmx.min.js' %}" defer></script>
-
-    <!-- Alpine.js (minimal usage) -->
-    <script src="{% static 'js/alpine.min.js' %}" defer></script>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%23ece9e0' stroke-width='1.4'/%3E%3Cline x1='16' y1='1.5' x2='16' y2='6' stroke='%23ece9e0' stroke-width='1.4'/%3E%3Cline x1='16' y1='26' x2='16' y2='30.5' stroke='%23ece9e0' stroke-width='1.4'/%3E%3Cline x1='1.5' y1='16' x2='6' y2='16' stroke='%23ece9e0' stroke-width='1.4'/%3E%3Cline x1='26' y1='16' x2='30.5' y2='16' stroke='%23ece9e0' stroke-width='1.4'/%3E%3Ccircle cx='16' cy='16' r='4.7' fill='none' stroke='%23e0554b' stroke-width='1.7'/%3E%3Ccircle cx='16' cy='16' r='1.9' fill='%23e0554b'/%3E%3C/svg%3E">
+    {% include "includes/seo_meta.html" %}
+    <!-- Tailwind (Play CDN) — tokens remapped to the DevLens palette -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              /* mapped existing tokens (RGB channels so /opacity modifiers work) */
+              background:           '16 15 13',
+              'background-card':    '22 21 19',
+              'background-elevated':'29 28 24',
+              'background-hover':   '37 36 31',
+              foreground:           '236 233 224',
+              'foreground-muted':   '167 163 153',
+              'foreground-subtle':  '130 126 116',
+              border:               '42 41 36',
+              'border-hover':       '56 55 47',
+              accent:               '224 85 75',
+              'accent-hover':       '212 69 60',
+              'accent-muted':       '40 31 30',
+              'severity-critical':  '224 85 75',
+              'severity-error':     '232 130 58',
+              'severity-warning':   '212 154 69',
+              'severity-info':      '116 167 124',
+              /* DevLens-native tokens */
+              signal: '224 85 75', jade: '116 167 124', amber: '212 154 69',
+              mist: '236 233 224', graphite: '16 15 13'
+            },
+            fontFamily: {
+              sans: ['Inter','ui-sans-serif','system-ui','sans-serif'],
+              display: ['Space Grotesk','Inter','sans-serif'],
+              mono: ['JetBrains Mono','ui-monospace','monospace']
+            },
+            fontSize: { '2xs': ['0.625rem',{ lineHeight:'1rem' }] },
+            spacing: { '4.5': '1.125rem', '18': '4.5rem' },
+            boxShadow: {
+              'soft': '0 18px 40px -24px rgba(0,0,0,0.6)',
+              'glow': '0 10px 30px -10px rgba(224,85,75,0.28)'
+            },
+            keyframes: {
+              'pulse-subtle': { '0%,100%':{opacity:'1'}, '50%':{opacity:'0.4'} }
+            },
+            animation: { 'pulse-subtle': 'pulse-subtle 2.4s ease-in-out infinite' }
+          }
+        }
+      }
+    </script>
+    <style>
+      :root { color-scheme: dark; }
+      html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; scroll-behavior: smooth; }
+      body { background: rgb(16 15 13); }
+      ::selection { background: rgba(224,85,75,.22); }
+      h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif; letter-spacing:-.02em; }
+      .font-display { font-family:'Space Grotesk',sans-serif; }
+      .dl-eyebrow { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; }
+      .dl-grid { background-image:linear-gradient(rgba(236,233,224,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(236,233,224,.04) 1px,transparent 1px); background-size:52px 52px; }
+      .dl-viewfinder { position:relative; }
+      .dl-viewfinder::before,.dl-viewfinder::after { content:''; position:absolute; width:14px; height:14px; border-color:rgba(224,85,75,.7); }
+      .dl-viewfinder::before { top:-1px; left:-1px; border-top:1.5px solid; border-left:1.5px solid; border-top-left-radius:4px; }
+      .dl-viewfinder::after { bottom:-1px; right:-1px; border-bottom:1.5px solid; border-right:1.5px solid; border-bottom-right-radius:4px; }
+      @keyframes dl-scan { 0%{transform:translateY(-110%);opacity:0} 12%{opacity:1} 88%{opacity:1} 100%{transform:translateY(320%);opacity:0} }
+      .dl-scan { position:absolute; left:0; right:0; height:42%; pointer-events:none; background:linear-gradient(to bottom,rgba(224,85,75,0),rgba(224,85,75,.08) 55%,rgba(224,85,75,.22) 92%,rgba(224,85,75,.5)); border-bottom:1px solid rgba(224,85,75,.55); animation:dl-scan 2.8s cubic-bezier(.65,0,.35,1) infinite; }
+      @keyframes dl-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.8)} }
+      .dl-pulse { animation:dl-pulse 2.2s ease-in-out infinite; }
+      .scroll-thin{ scrollbar-width:thin; scrollbar-color:#38372f transparent; }
+      .scroll-thin::-webkit-scrollbar{ width:9px; height:9px; }
+      .scroll-thin::-webkit-scrollbar-thumb{ background:#38372f; border-radius:999px; }
+      @media (prefers-reduced-motion: reduce){ *{ animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
+    </style>
+    <!-- htmx (used by example loaders / partials) -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="min-h-screen bg-background text-foreground font-sans antialiased"
-      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-
-    <!-- Navigation -->
+<body class="bg-background text-foreground font-sans antialiased">
     {% include "components/nav.html" %}
-
-    <!-- Messages -->
+    <!-- Django messages -->
     {% if messages %}
-    <div class="fixed top-20 right-4 z-50 space-y-2" x-data="{ show: true }" x-show="show" x-transition>
+    <div class="fixed top-20 right-4 z-[70] w-[calc(100%-2rem)] max-w-sm space-y-2" x-data="{ seen: [] }">
         {% for message in messages %}
-        <div class="px-4 py-3 rounded-xl shadow-soft border border-border
-                    {% if message.tags == 'success' %}bg-emerald-950/80 border-emerald-800/50 text-emerald-400
-                    {% elif message.tags == 'error' %}bg-red-950/80 border-red-800/50 text-red-400
-                    {% elif message.tags == 'warning' %}bg-amber-950/80 border-amber-800/50 text-amber-400
-                    {% else %}bg-background-elevated border-border text-foreground{% endif %}
-                    flex items-center gap-3 min-w-[300px]"
-             x-init="setTimeout(() => show = false, 5000)">
-            <button @click="show = false" class="ml-auto text-foreground-muted hover:text-foreground transition-colors">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        <div x-data="{ show:true }" x-show="show" x-transition
+             class="flex items-start gap-3 rounded-xl border bg-background-card/95 px-4 py-3 shadow-soft backdrop-blur
+             {% if 'error' in message.tags %}border-severity-error/40{% elif 'success' in message.tags %}border-severity-info/40{% elif 'warning' in message.tags %}border-severity-warning/40{% else %}border-border{% endif %}">
+            <span class="mt-0.5 h-2 w-2 shrink-0 rounded-full
+                {% if 'error' in message.tags %}bg-severity-error{% elif 'success' in message.tags %}bg-severity-info{% elif 'warning' in message.tags %}bg-severity-warning{% else %}bg-accent{% endif %}"></span>
+            <p class="flex-1 text-sm text-foreground-muted">{{ message }}</p>
+            <button @click="show=false" class="text-foreground-subtle hover:text-foreground" aria-label="Close">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
-            <span class="text-sm font-medium">{{ message }}</span>
         </div>
         {% endfor %}
     </div>
     {% endif %}
-
-    <!-- Main Content -->
-    <main class="min-h-[calc(100vh-64px-200px)]">
+    <main class="min-h-[60vh]">
         {% block content %}{% endblock %}
     </main>
-
-    <!-- Footer -->
     {% include "components/footer.html" %}
-
     {% block extra_scripts %}{% endblock %}
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>

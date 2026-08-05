@@ -1,87 +1,38 @@
 {% extends "base.html" %}
 {% load i18n %}
-
 {% block content %}
-<div class="min-h-screen flex items-center justify-center px-4 py-10">
-    <div class="w-full max-w-lg">
-        <div class="text-center mb-8">
-            <div class="w-12 h-12 rounded-xl bg-accent flex items-center justify-center mx-auto mb-4 shadow-glow">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
-            </div>
-            <h1 class="text-3xl font-bold tracking-tight text-foreground">
-                {% translate "Welcome Back" %}
-            </h1>
-            <p class="mt-3 text-base text-foreground-muted">{% translate "Sign in to access your reports." %}</p>
+<div class="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+        <div class="mb-8 text-center">
+            <a href="{% url 'landing' %}" class="mx-auto mb-7 inline-flex items-center gap-2.5">
+                <svg class="h-7 w-7 text-foreground" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.4"/><line x1="16" y1="1.5" x2="16" y2="6" stroke="currentColor" stroke-width="1.4"/><line x1="16" y1="26" x2="16" y2="30.5" stroke="currentColor" stroke-width="1.4"/><line x1="1.5" y1="16" x2="6" y2="16" stroke="currentColor" stroke-width="1.4"/><line x1="26" y1="16" x2="30.5" y2="16" stroke="currentColor" stroke-width="1.4"/><circle cx="16" cy="16" r="4.7" stroke="#e0554b" stroke-width="1.7"/><circle cx="16" cy="16" r="1.9" fill="#e0554b"/></svg>
+                <span class="font-display text-[18px] font-semibold tracking-tight text-foreground">Dev<span class="text-foreground-muted">Lens</span></span>
+            </a>
+            <h1 class="font-display text-3xl font-semibold tracking-tight text-foreground">{% translate "Welcome Back" %}</h1>
+            <p class="mt-2 text-sm text-foreground-muted">{% translate "Sign in to access your reports." %}</p>
         </div>
-
-        <div class="rounded-2xl overflow-hidden border border-border bg-background-card shadow-soft p-8">
-            <form method="post" class="space-y-6">
+        <div class="rounded-2xl border border-border bg-background-card p-6 shadow-soft sm:p-8">
+            <form method="post">
                 {% csrf_token %}
-                {% for field in form %}
-                <div class="space-y-2">
-
-                    <label
-                        for="{{ field.id_for_label }}"
-                        class="block text-sm font-medium text-foreground"
-                    >
-                        {{ field.label }}
-                    </label>
-
-                    <div class="relative">
-
-                        {{ field }}
-
-                        {% if field.name == "username" %}
-                        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-subtle"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M5.121 17.804A9 9 0 1118 20H6a1 1 0 01-.879-1.496z"/>
-                        </svg>
-                        {% endif %}
-
-                        {% if field.name == "password" %}
-                        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-subtle"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5s-3 1.343-3 3 1.343 3 3 3zm-7 8a7 7 0 1114 0H5z"/>
-                        </svg>
-                        {% endif %}
-
-                    </div>
-
-                    {% if field.errors %}
-                    <p class="text-sm text-severity-error">
-                        {{ field.errors.0 }}
-                    </p>
-                    {% endif %}
-
-                </div>
-                {% endfor %}
-
+                {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
                 {% if form.non_field_errors %}
-                <div class="rounded-xl border border-severity-error/20 bg-severity-error/10 px-4 py-3">
-                    <p class="text-xs text-severity-error">{{ form.non_field_errors.0 }}</p>
-                </div>
+                <div class="mb-4 rounded-lg border border-severity-error/30 bg-severity-error/10 px-3 py-2 text-sm text-severity-error">{{ form.non_field_errors }}</div>
                 {% endif %}
-
-                <button type="submit" class="w-full h-12 rounded-xl bg-accent text-white hover:shadow-glow transition duration-200 hover:bg-accent-hover active:scale-[0.98]">
-                    {% translate "Log In" %}
+                <div class="space-y-4">
+                    {% for field in form %}
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-foreground-muted" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<p class="mt-1.5 text-xs text-severity-error">{{ field.errors|join:" " }}</p>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-sm font-semibold text-background shadow-glow transition-all hover:bg-accent-hover">{% translate "Sign In" %}
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </button>
             </form>
         </div>
-
-        <p class="text-center text-sm text-foreground-muted mt-6">
-            {% translate "Don't have an account?" %}
-            <a href="{% url 'register' %}" class="text-accent hover:text-accent-hover font-medium transition-colors">{% translate "Sign Up" %}</a>
-        </p>
+        <p class="mt-6 text-center text-sm text-foreground-muted">{% translate "Don't have an account?" %} <a href="{% url 'register' %}" class="font-medium text-accent transition-colors hover:text-accent-hover">{% translate "Sign up" %}</a></p>
     </div>
 </div>
 {% endblock %}

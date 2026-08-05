@@ -1,58 +1,63 @@
 {% load i18n %}
 <footer class="border-t border-border bg-background">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <!-- Brand -->
-            <div class="md:col-span-1">
-                <a href="{% url 'landing' %}" class="flex items-center gap-2.5 mb-4">
-                    <div class="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
-                        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                    </div>
-                    <span class="text-base font-semibold text-foreground">DevLens</span>
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div class="flex flex-col justify-between gap-10 md:flex-row">
+            <div class="max-w-xs">
+                <a href="{% url 'landing' %}" class="flex items-center gap-2.5">
+                    <svg class="h-6 w-6 text-foreground" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                        <circle cx="16" cy="16" r="11" stroke="currentColor" stroke-width="1.4" opacity=".9"/>
+                        <line x1="16" y1="1.5" x2="16" y2="6" stroke="currentColor" stroke-width="1.4"/><line x1="16" y1="26" x2="16" y2="30.5" stroke="currentColor" stroke-width="1.4"/>
+                        <line x1="1.5" y1="16" x2="6" y2="16" stroke="currentColor" stroke-width="1.4"/><line x1="26" y1="16" x2="30.5" y2="16" stroke="currentColor" stroke-width="1.4"/>
+                        <circle cx="16" cy="16" r="4.7" stroke="#e0554b" stroke-width="1.7"/><circle cx="16" cy="16" r="1.9" fill="#e0554b"/>
+                    </svg>
+                    <span class="font-display text-[17px] font-semibold tracking-tight text-foreground">Dev<span class="text-foreground-muted">Lens</span></span>
                 </a>
-                <p class="text-sm text-foreground-muted leading-relaxed">
-                    {% translate "Paste anything. We'll figure it out." %}
-                </p>
+                <p class="mt-4 text-sm leading-relaxed text-foreground-muted">{% translate "Paste anything. We'll figure it out." %}</p>
+                <p class="mt-4 font-mono text-[11px] uppercase tracking-wider text-foreground-subtle">Traceback · Docker · SQL · Logs · Terminal</p>
             </div>
-
-            <!-- Product -->
-            <div>
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-4">{% translate "Product" %}</h4>
-                <ul class="space-y-2.5">
-                    <li><a href="{% url 'features' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Features" %}</a></li>
-                    <li><a href="{% url 'pricing' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Pricing" %}</a></li>
-                    {% if ENABLE_BLOG %}
-                    <li><a href="{% url 'blog-list' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Blog" %}</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-
-            <!-- Company -->
-            <div>
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-4">{% translate "Company" %}</h4>
-                <ul class="space-y-2.5">
-                    <li><a href="{% url 'privacy' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Privacy" %}</a></li>
-                    <li><a href="{% url 'terms' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "Terms" %}</a></li>
-                    <li><a href="{% url 'rss-feed' %}" class="text-sm text-foreground-muted hover:text-foreground transition-colors">{% translate "RSS Feed" %}</a></li>
-                </ul>
-            </div>
-
-            <!-- Connect -->
-            <div>
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-foreground-muted mb-4">{% translate "Connect" %}</h4>
-                <ul class="space-y-2.5">
-                    <li><a href="https://github.com" target="_blank" rel="noopener" class="text-sm text-foreground-muted hover:text-foreground transition-colors">GitHub</a></li>
-                    <li><a href="https://twitter.com" target="_blank" rel="noopener" class="text-sm text-foreground-muted hover:text-foreground transition-colors">Twitter</a></li>
-                </ul>
+            <div class="grid grid-cols-2 gap-10 sm:grid-cols-3">
+                <div>
+                    <h4 class="dl-eyebrow text-foreground-subtle">{% translate "Product" %}</h4>
+                    <ul class="mt-4 space-y-2.5">
+                        <li><a href="{% url 'features' %}" class="text-sm text-foreground-muted transition-colors hover:text-foreground">{% translate "Features" %}</a></li>
+                        <li><a href="{% url 'pricing' %}" class="text-sm text-foreground-muted transition-colors hover:text-foreground">{% translate "Pricing" %}</a></li>
+                        {% if ENABLE_BLOG %}<li><a href="{% url 'blog-list' %}" class="text-sm text-foreground-muted transition-colors hover:text-foreground">{% translate "Blog" %}</a></li>{% endif %}
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="dl-eyebrow text-foreground-subtle">{% translate "Account" %}</h4>
+                    <ul class="mt-4 space-y-2.5">
+                        <li><a href="{% url 'login' %}" class="text-sm text-foreground-muted transition-colors hover:text-foreground">{% translate "Log In" %}</a></li>
+                        <li><a href="{% url 'register' %}" class="text-sm text-foreground-muted transition-colors hover:text-foreground">{% translate "Sign Up" %}</a></li>
+                        {% if user.is_authenticated %}<li><a href="{% url 'dashboard' %}" class="text-sm text-foreground-muted transition-colors hover:text-foreground">{% translate "Dashboard" %}</a></li>{% endif %}
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="dl-eyebrow text-foreground-subtle">{% translate "Language" %}</h4>
+                    <ul class="mt-4 space-y-2.5">
+                        <li>
+                            <form action="{% url 'set_language' %}" method="post" class="inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="language" value="en">
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button type="submit" class="text-sm text-foreground-muted transition-colors hover:text-foreground">English</button>
+                            </form>
+                        </li>
+                        <li>
+                            <form action="{% url 'set_language' %}" method="post" class="inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="language" value="ru">
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button type="submit" class="text-sm text-foreground-muted transition-colors hover:text-foreground">Русский</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-
-        <div class="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p class="text-xs text-foreground-subtle">
-                &copy; {% now "Y" %} DevLens. {% translate "All rights reserved." %}
-            </p>
+        <div class="mt-12 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 sm:flex-row sm:items-center">
+            <p class="font-mono text-[11px] text-foreground-subtle">© {% now "Y" %} DevLens. {% translate "All rights reserved." %}</p>
+            <p class="font-mono text-[11px] text-foreground-subtle">{% translate "Engineering-grade error analysis." %}</p>
         </div>
     </div>
 </footer>
